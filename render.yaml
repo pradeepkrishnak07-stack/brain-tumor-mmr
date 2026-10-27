@@ -1,7 +1,23 @@
 services:
   # ---------------------------------------------------------------------------
-  # Brain Tumor Identification Using Mathematical Morphological Reconstruction
-  # Production Render Blueprint for Interactive Streamlit Application
+  # 1. FastAPI REST API Backend (Powers the Netlify React Frontend)
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: brain-tumor-mmr-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: CORS_ORIGINS
+        value: "*"
+
+  # ---------------------------------------------------------------------------
+  # 2. Interactive Streamlit Web Application (Standalone All-in-One Python Web App)
   # ---------------------------------------------------------------------------
   - type: web
     name: brain-tumor-mmr

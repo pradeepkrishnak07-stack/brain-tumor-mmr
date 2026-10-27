@@ -54,22 +54,36 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
     fill_holes: true
   });
 
+  const [clientError, setClientError] = useState<string | null>(null);
+
+  const validateAndSetFile = (file: File) => {
+    setClientError(null);
+    const MAX_SIZE = 25 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      setClientError(`Selected file exceeds the 25 MB limit (${(file.size / (1024 * 1024)).toFixed(1)} MB). Please select a standard axial MRI slice.`);
+      return;
+    }
+    const validExtensions = ['.png', '.jpg', '.jpeg', '.tif', '.tiff', '.bmp'];
+    const lowerName = file.name.toLowerCase();
+    if (!validExtensions.some(ext => lowerName.endsWith(ext))) {
+      setClientError('Unsupported format. Please select a PNG, JPG, JPEG, or TIFF image.');
+      return;
+    }
+    setSelectedFile(file);
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setSelectedFile(file);
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
+      validateAndSetFile(e.target.files[0]);
     }
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0];
-      setSelectedFile(file);
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
+      validateAndSetFile(e.dataTransfer.files[0]);
     }
   };
 
@@ -119,11 +133,11 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
       )}
 
       {/* Error Message Banner */}
-      {errorMessage && (
+      {(errorMessage || clientError) && (
         <div className="rounded-xl bg-red-950/40 border border-red-800 p-4 text-red-200 text-sm flex items-start space-x-3">
           <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
           <div>
-            <span className="font-bold text-red-300">Analysis Error:</span> {errorMessage}
+            <span className="font-bold text-red-300">Validation / Analysis Notice:</span> {clientError || errorMessage}
           </div>
         </div>
       )}

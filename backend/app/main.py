@@ -379,6 +379,13 @@ async def analyze_mri_image(
                 detail="Uploaded file is empty (0 bytes)."
             )
 
+        # Enforce maximum upload limit (25 MB)
+        if len(contents) > 25 * 1024 * 1024:
+            raise HTTPException(
+                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                detail="Uploaded image exceeds maximum allowable limit of 25 MB."
+            )
+
         # Decode image using PIL for robust cross-format reading
         pil_img = Image.open(io.BytesIO(contents))
         raw_img = np.array(pil_img)

@@ -30,3 +30,4 @@ def test_streamlit_app_sample_phantom_execution():
 
     # Verify that tabs and metrics were rendered
     assert len(at.tabs) == 5
+
