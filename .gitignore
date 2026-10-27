@@ -9,7 +9,7 @@ frontend/dist/
 dist/
 build/
 
-# Python
+# Python Virtual Environments & Bytecode
 __pycache__/
 *.py[cod]
 *$py.class
@@ -51,7 +51,21 @@ frontend/tsconfig.node.tsbuildinfo
 .env.production.local
 frontend/.env
 frontend/.env.local
+.streamlit/secrets.toml
 !*.example
+
+# Temporary Uploads & Private Patient MRI Data
+temp_uploads/
+tmp/
+temp/
+private_images/
+patient_data/
+*.dcm
+*.dicom
+*.nii
+*.nii.gz
+*.mha
+*.mhd
 
 # IDE & OS files
 .vscode/

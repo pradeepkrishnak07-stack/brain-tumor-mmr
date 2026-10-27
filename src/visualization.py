@@ -8,6 +8,8 @@ cross-sectional intensity profiles, and exportable figures.
 from typing import Tuple, Optional, Dict, Any, List
 import io
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import cv2

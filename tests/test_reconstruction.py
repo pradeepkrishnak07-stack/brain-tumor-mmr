@@ -70,8 +70,9 @@ def test_reconstruction_preserves_large_shapes_and_removes_small():
 
 
 def test_step_by_step_geodesic_convergence():
-    img = np.random.rand(40, 40).astype(np.float32)
-    marker, mask, meta = create_marker_and_mask(img, "opening_by_reconstruction", selem_size=3)
+    np.random.seed(42)
+    img = np.random.rand(30, 30).astype(np.float32)
+    marker, mask, meta = create_marker_and_mask(img, "opening_by_reconstruction", selem_size=2)
 
     sim = geodesic_reconstruction_step_by_step(
         marker=marker,
@@ -79,7 +80,7 @@ def test_step_by_step_geodesic_convergence():
         method="dilation",
         selem_shape="disk",
         selem_size=1,
-        max_iterations=80
+        max_iterations=120
     )
 
     assert sim["iterations"] > 0

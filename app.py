@@ -13,6 +13,8 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 import streamlit as st
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 # Core algorithm modules
@@ -98,11 +100,17 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
+# Base project directories for portable cross-platform path resolution
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SAMPLE_DIR = os.path.join(BASE_DIR, "sample_data")
+
+
 def init_sample_files():
     """Ensure sample directory and sample phantoms exist."""
-    os.makedirs("sample_data", exist_ok=True)
-    if not os.path.exists("sample_data/sample_1_t1_hyperintense.png"):
-        save_pregenerated_samples("sample_data")
+    os.makedirs(SAMPLE_DIR, exist_ok=True)
+    sample_1_path = os.path.join(SAMPLE_DIR, "sample_1_t1_hyperintense.png")
+    if not os.path.exists(sample_1_path):
+        save_pregenerated_samples(SAMPLE_DIR)
 
 
 init_sample_files()
@@ -157,10 +165,22 @@ else:
     ]
     selected_sample_name = st.sidebar.selectbox("Choose Sample Image", sample_options)
     sample_mapping = {
-        "Sample 1: T1-Gd Hyperintense Lesion": ("sample_data/sample_1_t1_hyperintense.png", "sample_data/sample_1_t1_gt_mask.png"),
-        "Sample 2: T2 Frontal Lesion": ("sample_data/sample_2_t2_frontal_lesion.png", "sample_data/sample_2_t2_gt_mask.png"),
-        "Sample 3: Normal Control (No Lesion)": ("sample_data/sample_3_normal_control.png", None),
-        "Sample 4: Geometric Calibration Phantom": ("sample_data/sample_4_calibration_phantom.png", "sample_data/sample_4_calibration_gt_mask.png")
+        "Sample 1: T1-Gd Hyperintense Lesion": (
+            os.path.join(SAMPLE_DIR, "sample_1_t1_hyperintense.png"),
+            os.path.join(SAMPLE_DIR, "sample_1_t1_gt_mask.png")
+        ),
+        "Sample 2: T2 Frontal Lesion": (
+            os.path.join(SAMPLE_DIR, "sample_2_t2_frontal_lesion.png"),
+            os.path.join(SAMPLE_DIR, "sample_2_t2_gt_mask.png")
+        ),
+        "Sample 3: Normal Control (No Lesion)": (
+            os.path.join(SAMPLE_DIR, "sample_3_normal_control.png"),
+            None
+        ),
+        "Sample 4: Geometric Calibration Phantom": (
+            os.path.join(SAMPLE_DIR, "sample_4_calibration_phantom.png"),
+            os.path.join(SAMPLE_DIR, "sample_4_calibration_gt_mask.png")
+        )
     }
 
 st.sidebar.markdown("---")
@@ -260,19 +280,33 @@ st.markdown("""
 raw_image = None
 if source_mode == "Upload Brain MRI":
     if uploaded_file is not None:
+        # Check upload size limit (25 MB)
+        MAX_UPLOAD_BYTES = 25 * 1024 * 1024
+        if uploaded_file.size > MAX_UPLOAD_BYTES:
+            st.error(f"❌ Uploaded file exceeds the 25 MB size limit ({uploaded_file.size / (1024*1024):.1f} MB). Please upload a standard axial MRI slice.")
+            st.stop()
+
         try:
             pil_img = Image.open(uploaded_file)
             raw_image = np.array(pil_img)
             input_image_name = uploaded_file.name
+            # Validate input dimensions and structure
+            raw_image = validate_image_input(raw_image)
         except Exception as err:
-            st.error(f"Error reading uploaded image file: {err}")
+            st.error(f"❌ Error validating uploaded image: {err}")
+            st.stop()
 else:
     img_path, gt_path = sample_mapping[selected_sample_name]
     if os.path.exists(img_path):
-        raw_image = np.array(Image.open(img_path).convert("L"))
-        input_image_name = os.path.basename(img_path)
-        if gt_path and os.path.exists(gt_path):
-            gt_mask_source = (np.array(Image.open(gt_path).convert("L")) > 127)
+        try:
+            raw_image = np.array(Image.open(img_path).convert("L"))
+            input_image_name = os.path.basename(img_path)
+            raw_image = validate_image_input(raw_image)
+            if gt_path and os.path.exists(gt_path):
+                gt_mask_source = (np.array(Image.open(gt_path).convert("L")) > 127)
+        except Exception as err:
+            st.error(f"❌ Error loading sample phantom: {err}")
+            st.stop()
 
 if raw_image is None:
     st.info("👈 Please upload a brain MRI image or select a verified sample phantom from the sidebar to begin analysis.")
