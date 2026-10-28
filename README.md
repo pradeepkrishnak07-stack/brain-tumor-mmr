@@ -1,12 +1,15 @@
 # Brain Tumor Identification Using Mathematical Morphological Reconstruction (MMR)
 
+[![Live Demo](https://img.shields.io/badge/Netlify-Live%20Demo-00C7B7.svg?style=for-the-badge&logo=netlify)](https://incandescent-gnome-24e281.netlify.app)
 [![React](https://img.shields.io/badge/React-19-blue.svg)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-8-purple.svg)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38B2AC.svg)](https://tailwindcss.com/)
-[![Netlify](https://img.shields.io/badge/Netlify-Deploy%20Ready-00C7B7.svg)](https://www.netlify.com/)
-[![Tests](https://img.shields.io/badge/Tests-49%20Passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-41%20Passed-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)]()
+
+> **🌐 Live Production URL:** [https://incandescent-gnome-24e281.netlify.app](https://incandescent-gnome-24e281.netlify.app)  
+> *Hosted entirely on Netlify Edge CDN with client-side WebEngine processing.*
 
 An academic medical image-processing web application implementing **Mathematical Morphological Reconstruction (MMR)** for brain MRI analysis, geodesic filtering, candidate abnormal region extraction, morphometric measurement, and automated report generation.
 
