@@ -5,6 +5,7 @@ interface NavbarProps {
   activeTab: 'home' | 'analysis' | 'results' | 'methodology' | 'about';
   setActiveTab: (tab: 'home' | 'analysis' | 'results' | 'methodology' | 'about') => void;
   backendOnline: boolean | null;
+  serviceName?: string;
   hasResults: boolean;
 }
 
@@ -12,6 +13,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   setActiveTab,
   backendOnline,
+  serviceName,
   hasResults
 }) => {
   return (
@@ -101,18 +103,18 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="hidden lg:flex items-center space-x-2 pl-3 border-l border-slate-800">
             {backendOnline === true && (
               <div className="flex items-center space-x-1.5 text-xs text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-800/60">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span className="font-medium">Backend Connected</span>
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="font-medium">{serviceName || 'Engine Ready'}</span>
               </div>
             )}
             {backendOnline === false && (
               <div className="flex items-center space-x-1.5 text-xs text-amber-400 bg-amber-950/60 px-2.5 py-1 rounded-full border border-amber-800/60" title="Backend offline or starting up">
                 <AlertCircle className="w-3.5 h-3.5" />
-                <span className="font-medium">Backend Offline</span>
+                <span className="font-medium">Engine Offline</span>
               </div>
             )}
             {backendOnline === null && (
-              <div className="text-xs text-slate-400 animate-pulse">Connecting...</div>
+              <div className="text-xs text-slate-400 animate-pulse">Initializing...</div>
             )}
           </div>
         </div>

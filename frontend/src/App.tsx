@@ -17,6 +17,7 @@ import type { AnalysisParameters, AnalysisResult, SampleItem } from './types';
 export function App() {
   const [activeTab, setActiveTab] = useState<'home' | 'analysis' | 'results' | 'methodology' | 'about'>('home');
   const [backendOnline, setBackendOnline] = useState<boolean | null>(null);
+  const [serviceName, setServiceName] = useState<string>('Netlify In-Browser Engine');
   const [samples, setSamples] = useState<SampleItem[]>([]);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -27,6 +28,7 @@ export function App() {
     const init = async () => {
       const health = await checkBackendHealth();
       setBackendOnline(health.ok);
+      setServiceName(health.service);
 
       const sampleList = await fetchSamplePhantoms();
       setSamples(sampleList);
@@ -38,6 +40,7 @@ export function App() {
     const interval = setInterval(async () => {
       const h = await checkBackendHealth();
       setBackendOnline(h.ok);
+      setServiceName(h.service);
     }, 30000);
 
     return () => clearInterval(interval);
@@ -78,6 +81,7 @@ export function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         backendOnline={backendOnline}
+        serviceName={serviceName}
         hasResults={result !== null}
       />
 
