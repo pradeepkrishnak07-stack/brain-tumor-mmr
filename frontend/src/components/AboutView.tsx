@@ -63,36 +63,36 @@ export const AboutView: React.FC = () => {
           <div className="p-4 rounded-xl bg-slate-800/40 border border-slate-800 space-y-2">
             <div className="font-bold text-cyan-400 uppercase tracking-wider text-[11px]">Frontend Web Layer</div>
             <ul className="space-y-1.5 text-slate-300">
-              <li>• React 18+ with TypeScript</li>
-              <li>• Vite build system</li>
+              <li>• React 19 with TypeScript</li>
+              <li>• Vite 8 build system</li>
               <li>• Tailwind CSS responsive UI</li>
               <li>• Lucide React icons</li>
               <li>• Recharts interactive data viz</li>
-              <li>• Netlify global CDN deployment</li>
+              <li>• Netlify global Edge CDN deployment</li>
             </ul>
           </div>
 
           <div className="p-4 rounded-xl bg-slate-800/40 border border-slate-800 space-y-2">
-            <div className="font-bold text-emerald-400 uppercase tracking-wider text-[11px]">Backend API Layer</div>
+            <div className="font-bold text-emerald-400 uppercase tracking-wider text-[11px]">Netlify In-Browser MMR Engine</div>
             <ul className="space-y-1.5 text-slate-300">
-              <li>• Python 3.11+</li>
-              <li>• FastAPI asynchronous web framework</li>
-              <li>• Uvicorn ASGI production server</li>
-              <li>• Multi-origin CORS support</li>
-              <li>• Base64 Data URI streaming</li>
-              <li>• Docker & Procfile cloud deployable</li>
+              <li>• Vincent (1993) geodesic reconstruction</li>
+              <li>• Dilation & dual erosion algorithms</li>
+              <li>• White & Black Top-Hat residual maps</li>
+              <li>• Otsu & Triangle adaptive thresholding</li>
+              <li>• 8-connected component morphometrics</li>
+              <li>• 100% Netlify client-side execution</li>
             </ul>
           </div>
 
           <div className="p-4 rounded-xl bg-slate-800/40 border border-slate-800 space-y-2">
-            <div className="font-bold text-amber-400 uppercase tracking-wider text-[11px]">Image-Processing Core</div>
+            <div className="font-bold text-amber-400 uppercase tracking-wider text-[11px]">Python Reference & Validation</div>
             <ul className="space-y-1.5 text-slate-300">
-              <li>• scikit-image geodesic reconstruction</li>
-              <li>• OpenCV (cv2) CLAHE & filters</li>
+              <li>• scikit-image C-level reference</li>
+              <li>• OpenCV CLAHE & Gaussian filtering</li>
               <li>• NumPy numerical matrix algebra</li>
-              <li>• Pillow cross-format decoding</li>
-              <li>• Pandas tabular feature extraction</li>
-              <li>• Pytest automated test suite (47 tests)</li>
+              <li>• FastAPI reference backend</li>
+              <li>• Streamlit desktop research app</li>
+              <li>• Pytest automated test suite (41 tests)</li>
             </ul>
           </div>
         </div>

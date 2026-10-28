@@ -119,15 +119,10 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
         <div className="rounded-xl bg-amber-950/40 border border-amber-800/80 p-4 text-amber-200 text-sm flex items-start space-x-3">
           <Server className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <div className="font-bold text-amber-300">Backend Server Not Detected</div>
+            <div className="font-bold text-amber-300">Custom Remote Endpoint Unreachable</div>
             <p className="text-xs text-amber-200/80 leading-relaxed">
-              The frontend is currently unable to reach the FastAPI backend at <code className="bg-amber-900/60 px-1 py-0.5 rounded text-amber-100">{API_BASE_URL}</code>.
+              The configured API endpoint at <code className="bg-amber-900/60 px-1 py-0.5 rounded text-amber-100">{API_BASE_URL}</code> could not be reached. The application will automatically execute the Mathematical Morphological Reconstruction pipeline client-side via the Netlify In-Browser MMR Engine.
             </p>
-            <div className="text-xs text-amber-300/90 pt-1">
-              <strong>Local Development:</strong> Start the backend using <code className="bg-slate-900 text-cyan-300 px-1.5 py-0.5 rounded">cd backend && uvicorn app.main:app --port 8000</code>.
-              <br />
-              <strong>Deployed Website:</strong> Set the <code className="bg-slate-900 text-cyan-300 px-1.5 py-0.5 rounded">VITE_API_BASE_URL</code> environment variable in Netlify to your deployed backend HTTPS URL (e.g. on Render/Railway).
-            </div>
           </div>
         </div>
       )}

@@ -338,6 +338,49 @@ export function morphologicalReconstructionByDilation(
   };
 }
 
+/**
+ * Fast Geodesic Morphological Reconstruction by Erosion (Vincent 1993).
+ * Dual formulation: erosionReconstruction(marker, mask) = 1 - dilationReconstruction(1 - marker, 1 - mask)
+ */
+export function morphologicalReconstructionByErosion(
+  marker: Image2D,
+  mask: Image2D,
+  maxPasses: number = 25
+): { reconstructed: Image2D; passes: number } {
+  const { width, height } = mask;
+  const dualMarker: Image2D = {
+    width,
+    height,
+    data: new Float32Array(width * height)
+  };
+  const dualMask: Image2D = {
+    width,
+    height,
+    data: new Float32Array(width * height)
+  };
+
+  for (let i = 0; i < dualMarker.data.length; i++) {
+    dualMarker.data[i] = 1.0 - marker.data[i];
+    dualMask.data[i] = 1.0 - mask.data[i];
+  }
+
+  const { reconstructed: dualRecon, passes } = morphologicalReconstructionByDilation(
+    dualMarker,
+    dualMask,
+    maxPasses
+  );
+
+  const outData = new Float32Array(width * height);
+  for (let i = 0; i < outData.length; i++) {
+    outData[i] = 1.0 - dualRecon.data[i];
+  }
+
+  return {
+    reconstructed: { width, height, data: outData },
+    passes
+  };
+}
+
 // ============================================================================
 // 6. Thresholding: Otsu & Triangle Algorithms
 // ============================================================================
@@ -865,6 +908,7 @@ export async function executeBrowserMMR(
   let marker: Image2D;
   const mask: Image2D = { width, height, data: new Float32Array(prep.data) };
 
+  let isErosionMode = false;
   if (params.recon_method === 'h_dome') {
     // H-Dome: marker = mask - h
     const hData = new Float32Array(prep.data.length);
@@ -875,19 +919,35 @@ export async function executeBrowserMMR(
   } else if (params.recon_method === 'closing_by_reconstruction') {
     // Closing by reconstruction: marker = dilation(f, B)
     marker = grayscaleDilation(prep, se);
+    isErosionMode = true;
+  } else if (params.recon_method === 'regional_maxima_marker') {
+    // Regional maxima marker: upper percentile seed peaks
+    const sorted = new Float32Array(prep.data).sort();
+    const p95 = sorted[Math.floor(0.95 * sorted.length)] || 0.8;
+    const rData = new Float32Array(prep.data.length);
+    for (let i = 0; i < rData.length; i++) {
+      rData[i] = prep.data[i] >= p95 ? prep.data[i] : 0.0;
+    }
+    marker = { width, height, data: rData };
   } else {
     // Default: Opening by reconstruction: marker = erosion(f, B)
     marker = grayscaleErosion(prep, se);
   }
 
   // 4. Geodesic Reconstruction Engine (Vincent 1993)
-  const { reconstructed } = morphologicalReconstructionByDilation(marker, mask);
+  const { reconstructed } = isErosionMode
+    ? morphologicalReconstructionByErosion(marker, mask)
+    : morphologicalReconstructionByDilation(marker, mask);
 
-  // 5. White Top-Hat Residual Computation: residual = max(0, mask - reconstructed)
+  // 5. Morphological Residual Computation
+  // White Top-Hat: max(0, mask - reconstructed)
+  // Black Top-Hat (for closing): max(0, reconstructed - mask)
   const residualData = new Float32Array(width * height);
   let maxRes = 0.0;
   for (let i = 0; i < residualData.length; i++) {
-    const diff = Math.max(0.0, mask.data[i] - reconstructed.data[i]);
+    const diff = isErosionMode
+      ? Math.max(0.0, reconstructed.data[i] - mask.data[i])
+      : Math.max(0.0, mask.data[i] - reconstructed.data[i]);
     residualData[i] = diff;
     if (diff > maxRes) maxRes = diff;
   }
